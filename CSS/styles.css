@@ -1,0 +1,36 @@
+/* universal selector */
+*{
+    color:red;
+     padding: 0%;
+    margin: 0%;
+}
+/* element selector */
+div{
+    background-color: burlywood;
+}
+
+/* class selector */
+.second{
+    background-color: blueviolet;
+    color:aliceblue;
+}
+
+.div-2{
+    background-color: black;
+    color: white;
+}
+
+.div-4{
+    background-color: cyan;
+    color: black;
+    align-items: center;
+    height: 100vh;
+    padding: 0%;
+    margin: 0%;
+}
+
+/* id selector */
+#div-3{
+    background-color: green;
+    color: white;
+}
