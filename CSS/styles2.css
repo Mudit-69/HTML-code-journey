@@ -1,0 +1,117 @@
+body{
+    background-color: darkblue;
+    font-family: Arial, sans-serif;
+}
+
+.number_1   {
+    background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGF0dGVybmVkJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.number_2 {
+    /* background-color: lightgreen; */
+    background-image:linear-gradient(to right, lightgreen, red);
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.number_3 {
+    background-image: radial-gradient(circle, lightcoral, darkred);
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.star {
+   background-color: yellow;
+   animation: twinkle 5s infinite;
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.number_4 {
+    background-color: lightblue;
+    animation: pulse 3s infinite;
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.number_5 {
+    background-color: lightcoral;
+    animation: pulse 3s infinite;
+    color: black;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+}
+/* animations */
+
+@keyframes twinkle {
+    from {
+        background-color: yellow;
+    }
+    to {
+        background-color: white;
+    }
+}
+
+@keyframes twinkle {
+    0% {
+        background-color: red;
+    }
+    25% {
+        background-color: white;
+    }
+    50% {
+        background-color: green;
+    }
+    75% {
+        background-color: blue;
+    }
+    100% {
+        background-color: yellow;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        background-color: lightblue;
+    }
+    50% {
+        transform: scale(1.1);
+        background-color: lightcoral;
+    }
+    100% {
+        transform: scale(1);
+        background-color: lightblue;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        background-color: lightblue;
+    }
+    50% {
+        transform: scale(1.1);
+        background-color: lightcoral;
+    }
+    100% {
+        transform: scale(1);
+        background-color: red;
+    }
+}
