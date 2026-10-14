@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Bit Retro Shooter</title>
+    <style>
+        @import url('https://googleapis.com');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0b1a;
+            color: #fff;
+            font-family: 'Press Start 2P', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            border: 4px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+        }
+
+        /* UI Overlay Screens */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #ff0055;
+            text-shadow: 3px 3px #00ffff;
+            margin-bottom: 40px;
+            animation: blink 1s infinite alternate;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 12px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        button {
+            font-family: 'Press Start 2P', monospace;
+            background-color: #ff0055;
+            color: white;
+            border: 4px solid #fff;
+            padding: 15px 30px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 4px 4px #00ffff;
+            image-rendering: pixelated;
+        }
+
+        button:hover {
+            background-color: #00ffff;
+            color: #000;
+            box-shadow: 4px 4px #ff0055;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px #ff0055;
+        }
+
+        /* Shop Grid layout */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 25px;
+        }
+
+        .shop-item {
+            background: #111;
+            border: 2px dashed #555;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shop-item-info {
+            text-align: left;
+        }
+
+        .shop-item-title {
+            font-size: 10px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .shop-item-cost {
+            font-size: 10px;
+            color: #ffcc00;
+        }
+
+        .shop-btn {
+            padding: 8px 12px;
+            font-size: 10px;
+            box-shadow: 2px 2px #00ffcc;
+            background-color: #333;
+            border: 2px solid #fff;
+        }
+        
+        .shop-btn:hover {
+            box-shadow: 2px 2px #ff0055;
+            background-color: #00ffcc;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 450px;
+            font-size: 10px;
+            color: #ffcc00;
+            margin-bottom: 15px;
+        }
+
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- HUD Canvas Layers -->
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>SPACE RETRO</h1>
+            <p>
+                [W,A,S,D] or [Arrows] to Move<br>
+                [Spacebar] to Shoot<br><br>
+                Defeat aliens, collect coins, and survive the levels!
+            </p>
+            <button id="start-btn">START GAME</button>
+        </div>
+
+        <!-- Shop Screen (Triggers between levels) -->
+        <div id="shop-screen" class="screen hidden">
+            <h2>HYPER SPACE SHOP</h2>
+            <div class="stats-bar">
+                <span id="shop-coins">COINS: 0</span>
+                <span id="shop-level">NEXT: LEVEL 2</span>
+            </div>
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <div class="shop-item-title">UPGRADE LASER (FIRE RATE)</div>
+                        <div class="shop-item-cost" id="cost-atk">COST: 15 COINS</div>
+                    </div>
+                    <button class="shop-btn" id="buy-atk">BUY</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <div class="shop-item-title">UPGRADE THRUSTERS (SPEED)</div>
+                        <div class="shop-item-cost" id="cost-spd">COST: 10 COINS</div>
+                    </div>
+                    <button class="shop-btn" id="buy-spd">BUY</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-item-info">
+                        <div class="shop-item-title">REPAIR & UPGRADE HULL (+1 HP)</div>
+                        <div class="shop-item-cost" id="cost-hp">COST: 20 COINS</div>
+                    </div>
+                    <button class="shop-btn" id="buy-hp">BUY</button>
+                </div>
+            </div>
+            <button id="next-level-btn">LAUNCH NEXT WAVE</button>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameover-screen" class="screen hidden">
+            <h1 style="color: #ff0000; text-shadow: 3px 3px #555;">GAME OVER</h1>
+            <p id="final-stats">LEVEL REACHED: 1<br>SCORE: 0</p>
+            <button id="restart-btn">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Prevent anti-aliasing for true pixel-art crispness
+        ctx.imageRendering = 'pixelated';
+        ctx.mozImageRendering = 'crisp-edges';
+        ctx.webkitImageRendering = 'pixelated';
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const shopScreen = document.getElementById('shop-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const nextLevelBtn = document.getElementById('next-level-btn');
+        
+        const buyAtkBtn = document.getElementById('buy-atk');
+        const buySpdBtn = document.getElementById('buy-spd');
+        const buyHpBtn = document.getElementById('buy-hp');
+        
+        const costAtkText = document.getElementById('cost-atk');
+        const costSpdText = document.getElementById('cost-spd');
+        const costHpText = document.getElementById('cost-hp');
+        const shopCoinsText = document.getElementById('shop-coins');
+        const shopLevelText = document.getElementById('shop-level');
+        const finalStatsText = document.getElementById('final-stats');
+
+        // Game State Variables
+        let gameState = 'START'; // START, PLAYING, SHOP, GAMEOVER
+        let score = 0;
+        let coins = 0;
+        let level = 1;
+        let enemiesKilledInLevel = 0;
+        let totalEnemiesToNextLevel = 10;
+
+        // Key bindings object
+        const keys = {
+            w: false, a: false, s: false, d: false,
+            ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
+            Space: false
+        };
+
+        // Upgrades/Prices Config
+        let upgrades = {
+            fireRateLevel: 1,
+            speedLevel: 1,
+            maxHpLevel: 3,
+            costAtk: 15,
+            costSpd: 10,
+            costHp: 20
+        };
+
+        // Entities
+        let player = {
+            x: 285,
+            y: 500,
+            width: 30,
+            height: 30,
+            speed: 4,
+            hp: 3,
+            maxHp: 3,
+            lastShot: 0,
+            cooldown: 400 // ms between shots
+        };
+
+        let bullets = [];
+        let enemies = [];
+        let particles = [];
+        let dropCoins = [];
+        let stars = [];
+
+        // Generate background starfield
+        for (let i = 0; i < 60; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 1,
+                speed: Math.random() * 1.5 + 0.5
+            });
+        }
+
+        // --- Event Listeners ---
+        window.addEventListener('keydown', (e) => {
+            let keyName = e.key === ' ' ? 'Space' : e.key;
+            if (keyName in keys) keys[keyName] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            let keyName = e.key === ' ' ? 'Space' : e.key;
+            if (keyName in keys) keys[keyName] = false;
+        });
+
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', resetToStart);
+        nextLevelBtn.addEventListener('click', startNextLevel);
+        buyAtkBtn.addEventListener('click', () => buyUpgrade('atk'));
+buySpdBtn.addEventListener('click', () => buyUpgrade('spd'));
+buyHpBtn.addEventListener('click', () => buyUpgrade('hp'));
+
+// --- Game Logic Functions ---
+function startGame() {
+    startScreen.classList.add('hidden');
+    shopScreen.classList.add('hidden');
+    gameoverScreen.classList.add('hidden');
+    
+    // Reset gameplay data
+    score = 0;
+    coins = 0;
+    level = 1;
+    enemiesKilledInLevel = 0;
+    totalEnemiesToNextLevel = 10;
+    
+    // Reset Upgrades
+    upgrades = { fireRateLevel: 1, speedLevel: 1, maxHpLevel: 3, costAtk: 15, costSpd: 10, costHp: 20 };
+    
+    // Reset Player
+    player.maxHp = 3;
+    player.hp = 3;
+    player.speed = 4;
+    player.cooldown = 400;
+    player.x = 285;
+    player.y = 500;
+
+    bullets = [];
+    enemies = [];
+    particles = [];
+    dropCoins = [];
+
+    gameState = 'PLAYING';
+}
+
+function resetToStart() {
+    gameoverScreen.classList.add('hidden');
+    startScreen.classList.remove('hidden');
+    gameState = 'START';
+}
+
+function triggerShop() {
+    gameState = 'SHOP';
+    shopScreen.classList.remove('hidden');
+    
+    // Update shop UI text strings
+    shopCoinsText.innerText = `COINS: ${coins}`;
+    shopLevelText.innerText = `NEXT: LEVEL ${level + 1}`;
+    costAtkText.innerText = `COST: ${upgrades.costAtk} COINS`;
+    costSpdText.innerText = `COST: ${upgrades.costSpd} COINS`;
+    costHpText.innerText = `COST: ${upgrades.costHp} COINS`;
+}
+
+function buyUpgrade(type) {
+    if (type === 'atk' && coins >= upgrades.costAtk) {
+        coins -= upgrades.costAtk;
+        upgrades.fireRateLevel++;
+        player.cooldown = Math.max(120, player.cooldown - 50); // decrease fire rate cooldown interval
+        upgrades.costAtk = Math.floor(upgrades.costAtk * 1.6);
+    } else if (type === 'spd' && coins >= upgrades.costSpd) {
+        coins -= upgrades.costSpd;
+        upgrades.speedLevel++;
+        player.speed += 0.75; // enhance movement speed
+        upgrades.costSpd = Math.floor(upgrades.costSpd * 1.5);
+    } else if (type === 'hp' && coins >= upgrades.costHp) {
+        coins -= upgrades.costHp;
+        upgrades.maxHpLevel++;
+        player.maxHp += 1;
+        player.hp = player.maxHp; // Refills and adds capacity
+        upgrades.costHp = Math.floor(upgrades.costHp * 1.7);
+    }
+    triggerShop(); // Refresh view
+}
+
+function startNextLevel() {
+    level++;
+    enemiesKilledInLevel = 0;
+    totalEnemiesToNextLevel = 10 + (level * 3); // Levels scale in enemy count
+    bullets = [];
+    enemies = [];
+    
+    shopScreen.classList.add('hidden');
+    gameState = 'PLAYING';
+}
+
+function triggerGameOver() {
+    gameState = 'GAMEOVER';
+    finalStatsText.innerHTML = `LEVEL REACHED: ${level}<br>FINAL SCORE: ${score}`;
+    gameoverScreen.classList.remove('hidden');
+}
+
+// --- Spawning and Mechanics ---
+function spawnEnemy() {
+    // Mechanics: Enemies scale with speed and spawn timing modifiers per level progression
+    if (gameState !== 'PLAYING') return;
+    
+    // Don't spawn more than needed for current level completion
+    let totalActiveAndKilled = enemies.length + enemiesKilledInLevel;
+    if (totalActiveAndKilled >= totalEnemiesToNextLevel) return;
+
+    let size = 24 + Math.floor(Math.random() * 12);
+    let speedX = (Math.random() - 0.5) * 2;
+    let speedY = (Math.random() * 1.5) + 1 + (level * 0.2); // Faster at higher levels
+
+    enemies.push({
+        x: Math.random() * (canvas.width - size),
+        y: -size,
+        width: size,
+        height: size,
+        speedX: speedX,
+        speedY: speedY,
+        color: `hsl(${(level * 40) % 360}, 90%, 50%)`
+    });
+}
+
+// Spawn timer tracker loops
+let lastEnemySpawn = 0;
+function handleSpawning(timestamp) {
+    let spawnInterval = Math.max(400, 1500 - (level * 100)); // Spawns increase speed based on level
+    if (timestamp - lastEnemySpawn > spawnInterval) {
+        spawnEnemy();
+        lastEnemySpawn = timestamp;
+    }
+}
+
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 8; i++) {
+        particles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4,
+            size: Math.random() * 3 + 2,
+            color: color || '#ff0055',
+            life: 25
+        });
+    }
+}
+
+// Collision math utility
+function rectCollision(rect1, rect2) {
+    return rect1.x < rect2.x + rect2.width &&
+           rect1.x + rect1.width > rect2.x &&
+           rect1.y < rect2.y + rect2.height &&
+           rect1.y + rect1.height > rect2.y;
+}
+
+// --- Update and Draw loops ---
+function update(timestamp) {
+    if (gameState === 'PLAYING') {
+        handleSpawning(timestamp);
+
+        // --- Move Player ---
+        if (keys.w || keys.ArrowUp) player.y -= player.speed;
+        if (keys.s || keys.ArrowDown) player.y += player.speed;
+        if (keys.a || keys.ArrowLeft) player.x -= player.speed;
+        if (keys.d || keys.ArrowRight) player.x += player.speed;
+
+        // Boundary confinement constraints
+        if (player.x < 0) player.x = 0;
+        if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+        if (player.y < 0) player.y = 0;
+        if (player.y > canvas.height - player.height) player.y = canvas.height - player.height;
+
+        // Fire Bullet
+        if (keys.Space && timestamp - player.lastShot > player.cooldown) {
+            bullets.push({
+                x: player.x + (player.width / 2) - 3,
+                y: player.y,
+                width: 6,
+                height: 12,
+                speed: 7
+            });
+            player.lastShot = timestamp;
+        }
+
+        // --- Update Bullets ---
+        for (let i = bullets.length - 1; i >= 0; i--) {
+            bullets[i].y -= bullets[i].speed;
+            if (bullets[i].y < -20) {
+                bullets.splice(i, 1);
+            }
+        }
+
+        // --- Update Enemies ---
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            let e = enemies[i];
+            e.y += e.speedY;
+            e.x += e.speedX;
+
+            // Screen bouncing logic structure boundaries
+            if (e.x < 0 || e.x > canvas.width - e.width) e.speedX *= -1;
+
+            // Passed boundary loss conditions logic
+            if (e.y > canvas.height) {
+                enemies.splice(i, 1);
+                player.hp--;
+                if (player.hp <= 0) triggerGameOver();
+                continue;
+            }
+
+            // Collision with Player ship
+            if (rectCollision(e, player)) {
+                createExplosion(e.x + e.width/2, e.y + e.height/2, e.color);
+                enemies.splice(i, 1);
+                player.hp--;
+                if (player.hp <= 0) triggerGameOver();
+                continue;
+            }
+
+            // Collision with Bullets
+            for (let j = bullets.length - 1; j >= 0; j--) {
+                if (rectCollision(e, bullets[j])) {
+                    createExplosion(e.x + e.width/2, e.y + e.height/2, e.color);
+                    
+                    // 50% chance drop coin loot mechanics
+                    if (Math.random() < 0.5) {
+                        dropCoins.push({
+                            x: e.x + e.width/2 - 4,
+                            y: e.y + e.height/2 - 4,
+                            width: 10, height: 10,
+                            speedY: 2
+                        });
+                    }
+
+                    enemies.splice(i, 1);
+                    bullets.splice(j, 1);
+                    
+                    score += 10;
+                    enemiesKilledInLevel++;
+                    
+                    // Check level target criteria clearing conditions
+                    if (enemiesKilledInLevel >= totalEnemiesToNextLevel && enemies.length === 0) {
+                        triggerShop();
+                    }
+                    break;
+                }
+            }
+        }
+
+        // --- Update Dropped Currency Loot ---
+        for (let i = dropCoins.length - 1; i >= 0; i--) {
+            let c = dropCoins[i];
+            c.y += c.speedY;
+
+            if (rectCollision(c, player)) {
+                coins++;
+                score += 5;
+                dropCoins.splice(i, 1);
+                continue;
+            }
+
+            if (c.y > canvas.height) {
+                dropCoins.splice(i, 1);
+            }
+        }
+    }
+
+    // --- Move Stars Background (Runs Always) ---
+    stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > canvas.height) {
+            s.y = 0;
+            s.x = Math.random() * canvas.width;
+        }
+    });
+
+    // --- Update Particles Explosion Lifespan --
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+    }
+}
+
+function draw() {
+    // Clear Frame Clear Layer screen
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Parallax Stars background
+    ctx.fillStyle = '#ffffff';
+    stars.forEach(s => {
+        ctx.fillRect(s.x, s.y, s.size, s.size);
+    });
+
+    // Draw Particle effects
+    particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    });
+
+    if (gameState === 'PLAYING' || gameState === 'SHOP' || gameState === 'GAMEOVER') {
+        // Draw Drops Coins
+        dropCoins.forEach(c => {
+            ctx.fillStyle = '#ffcc00';
+            ctx.fillRect(c.x, c.y, c.width, c.height);
+            // Detail inside coin pixel art
+            ctx.fillStyle = '#ff6600';
+            ctx.fillRect(c.x + 2, c.y + 2, c.width - 4, c.height - 4);
+        });
+
+        // Draw Active Laser Bullets
+        ctx.fillStyle = '#00ffff';
+        bullets.forEach(b => {
+            ctx.fillRect(b.x, b.y, b.width, b.height);
+        });
