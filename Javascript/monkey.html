@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Shreeya Extradition Brief | Department of Public Sanitation</title>
+    <style>
+        :root {
+            --primary-dark: #1b2a1c;
+            --accent-green: #2e7d32;
+            --alert-red: #b71c1c;
+            --bg-light: #f8f9fa;
+            --text-dark: #212529;
+            --border-color: #dae0e5;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .top-bar {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            padding: 0.5rem 0;
+            font-weight: bold;
+            border-bottom: 3px solid var(--accent-green);
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .header-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--primary-dark);
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        @media (min-width: 902px) {
+            .main-container {
+                grid-template-columns: 2.5fr 1.2fr;
+            }
+        }
+
+        .doc-section {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .doc-section h2 {
+            font-size: 1.6rem;
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-box {
+            background: #f1f3f5;
+            border-left: 4px solid var(--accent-green);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .meta-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .meta-box td {
+            padding: 0.25rem 0;
+        }
+
+        .meta-box td.label {
+            font-weight: bold;
+            color: #495057;
+            width: 30%;
+        }
+
+        .alert-card {
+            border: 1px solid #f5c6cb;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-card h3 {
+            margin-top: 0;
+            color: var(--alert-red);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .img-container {
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 3rem 1rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .img-emoji {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1rem;
+            font-style: normal;
+        }
+
+        /* Tactical Game Interface */
+        .game-panel {
+            background: #ffffff;
+            border: 2px solid var(--primary-dark);
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+
+        .game-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
+            background: var(--primary-dark);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        #containment-zone {
+            width: 100%;
+            height: 350px;
+            background: #cad2c5;
+            border: 1px dashed var(--primary-dark);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #asset-target {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            cursor: crosshair;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            z-index: 10;
+        }
+
+        #asset-target img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .control-btn {
+            display: block;
+            width: 100%;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .control-btn:hover {
+            background: #225e25;
+        }
+
+        .sidebar-widget {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-widget h3 {
+            margin-top: 0;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        ul.spec-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul.spec-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f3f5;
+            font-size: 0.9rem;
+        }
+
+        ul.spec-list li strong {
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">RESTRICTED DOSSIER // FOR INTERNAL ACADEMY USE ONLY</div>
+
+    <header>
+        <div class="header-container">
+            <h1>Project Shreeya: Taxonomic Case File</h1>
+            <p>An investigation into the September 2016 domestic refuse extraction anomalies</p>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- Left Column: Dossier Content -->
+        <main>
+            <article class="doc-section">
+                <h2>1.0 Executive Summary & Origin Report</h2>
+                
+                <div class="meta-box">
+                    <table>
+                        <tr>
+                            <td class="label">Subject Identification:</td>
+                            <td>Shreeya (Unclassified Primate)</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Date of Acquisition:</td>
+                            <td>September 28, 2016</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Primary Habitat:</td>
+                            <td>Council Asset #402 (Green-Lid Mobile Garbage Bin)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>On the morning of <strong>September 28, 2016</strong>, standard municipal waste management operations encountered a critical disruption. During a routine mechanical collection cycle, automated lift sensors registered a localized counter-weight anomaly within a residential green-lid wheelie bin. Upon manual inspection by sanitation engineers, it was discovered that the container did not house typical domestic waste, but rather an undetected, highly territorial organic entity.</p>
+                
+                <p>The subject, known colloquially as <strong>Shreeya</strong>, was pulled directly from the deep recycling layer of the bin matrix. Forensic evidence indicates she had established a highly organized nesting perimeter composed of discarded banana skins, municipal rubbish, and vintage school wrappers. Upon extraction, she displayed immediate complex primate behaviors, including loud territorial screeches, frantic doorframe climbing, and an innate, violent aversion to formal mathematics homework.</p>
+
+                <div class="img-container">
+                    <span class="img-emoji"><img src="data:image/jpeg;base64,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"></span>
+                    FIGURE 1.A: Archive recovery image of Subject resisting transition from the primary wheelie bin habitat (2016).
+                </div>
+
+                <p>Following the 2016 extraction event, the subject was integrated into a standard domestic household under the guise of a typical human sister. However, long-term observation reveals that her core wild behaviors remain fully uncompromised. Biometric data confirms she regularly reverts to ancestral patterns, specifically active screeching cycles when requested to clean her quarters or execute academic tasks associated with high-performance curricula.</p>
+            </article>
+
+            <article class="doc-section">
+                <h2>2.0 Containment & Tactical Capture Simulation</h2>
+                <p>Due to the ongoing atmospheric pressure of Term 4, the subject's baseline agitation levels have expanded. She has broken containment and is actively utilizing QASMT architectural points to evade local sanitation wardens. Use the tactical grid below to execute dynamic clicking maneuvers and logging attempts.
+CAPTURES: 0
+TIME SEC: 20
+VELOCITY: 1x
+Initialize Containment Protocol
+Escalation Mode: Increase Speed
+
+
+⚠️ Mandatory Extradition Order
+Wants Waste Management Solutions Ltd. issued Legal Directive 402-A on October 14, 2026:
+
+"Our audits confirm a premium, grade-A bin monkey escaped custody during the September 2016 clearance window. The asset is currently masquerading as an enrolled student. Wants Corp demands immediate retrieval and re-allocation to a green-lidded depository."
+
+Technical Specifications
+
+Designation: Bin Monkey Prime
+Origin Date: 28-SEP-2016
+Extraction Hub: Local Trash Depot
+Dietary Needs: Raw Banana Core
+Vocalization: Sub-sonic Screeching
+Homework Resistance: 99.8% Efficiency
+
+Sanitation Clearance Status
+All municipal assets recovered from waste cycles remain the sole administrative property of the local collection firm. Integration into public academy frameworks does not constitute human status.</p>
+            </article>
+        </main>
+        <script>
+            const containmentZone = document.getElementById('containment-zone');
+const assetTarget = document.getElementById('asset-target');
+const initBtn = document.getElementById('init-btn');
+const speedBtn = document.getElementById('speed-btn');
+const scoreDisplay = document.getElementById('game-score');
+const timerDisplay = document.getElementById('game-timer');
+const levelDisplay = document.getElementById('game-level');
+let currentScore = 0;
+let timeRemaining = 20;
+let dynamicInterval;
+let movementInterval;
+let activeStatus = false;
+let velocityDelay = 900;
+function relocateAsset() {
+if (!activeStatus) return;
+const boundaryX = containmentZone.clientWidth - 60;
+const boundaryY = containmentZone.clientHeight - 60;
+const targetedX = Math.floor(Math.random() * boundaryX);
+const targetedY = Math.floor(Math.random() * boundaryY);
+assetTarget.style.left = targetedX + 'px';
+assetTarget.style.top = targetedY + 'px';
+}
+function initiateProtocol() {
+currentScore = 0;
+timeRemaining = 20;
+velocityDelay = 900;
+activeStatus = true;
+scoreDisplay.textContent = currentScore;
+timerDisplay.textContent = timeRemaining;
+levelDisplay.textContent = "1x";
+initBtn.style.display = 'none';
+speedBtn.style.display = 'block';
+assetTarget.style.display = 'flex';
+relocateAsset();
+resetMovementLoop();
+dynamicInterval = setInterval(() => {
+timeRemaining--;
+timerDisplay.textContent = timeRemaining;
+if (timeRemaining <= 0) {
+terminateProtocol();
+}
+}, 1000);
+}
+function resetMovementLoop() {
+clearInterval(movementInterval);
+movementInterval = setInterval(relocateAsset, velocityDelay);
+}
+function terminateProtocol() {
+clearInterval(dynamicInterval);
+clearInterval(movementInterval);
+activeStatus = false;
+assetTarget.style.display = 'none';
+speedBtn.style.display = 'none';
+initBtn.style.display = 'block';
+initBtn.textContent = 'Re-Initialize Protocol';
+alert(`Containment Breach! You captured the bin monkey ${currentScore} times!`);
+}
+assetTarget.addEventListener('click', (e) => {
+if (activeStatus) {
+currentScore++;
+scoreDisplay.textContent = currentScore;
+// Adaptive speed scaling
+if (currentScore % 4 === 0 && velocityDelay > 300) {
+velocityDelay -= 150;
+const tier = 1 + ((900 - velocityDelay) / 150);
+levelDisplay.textContent = tier + 'x';
+resetMovementLoop();
+}
+relocateAsset();
+if (e.stopPropagation) e.stopPropagation();
+}
+});
+speedBtn.addEventListener('click', () => {
+if (activeStatus && velocityDelay > 200) {
+velocityDelay -= 100;
+levelDisplay.textContent = "BOOSTED";
+resetMovementLoop();
+}
+});
+initBtn.addEventListener('click', initiateProtocol);
+        </script>
+        </div>
+</body>
+</html>

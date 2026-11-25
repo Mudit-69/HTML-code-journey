@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Legend of Shreeya</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #d32f2f;
+            --dark: #1b1b1b;
+            --light: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            margin: 0.5rem 0 0;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .news-flash {
+            border-left: 5px solid var(--secondary);
+            background-color: #ffebee;
+        }
+
+        .news-flash h2 {
+            color: var(--secondary);
+            margin-top: 0;
+        }
+
+        .image-placeholder {
+            background-color: #e0e0e0;
+            border: 2px dashed #9e9e9e;
+            border-radius: 8px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 1rem 0;
+            color: #616161;
+            font-weight: bold;
+        }
+
+        .image-placeholder span {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Game Section */
+        #game-area {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background-color: #e8f5e9;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #target-monkey {
+            position: absolute;
+            font-size: 2.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>The Official Shreeya Archive</h1>
+        <p>Documenting QASMT's local bin explorer</p>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <div>
+                <!-- Origin Story -->
+                <section class="card">
+                    <h2>📜 The Origin Story</h2>
+                    <p>It was a dark and stormy garbage collection day when the truth was uncovered. Scientists originally thought Shreeya was a regular human sister, but deep genealogical research proved otherwise: <strong>she is actually a rare species of monkey straight from the local wheelie bin.</strong></p>
+                    
+                    <div class="image-placeholder">
+                        <span><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh1Yqtl27_O3bLFGDohN9EpfRNP8KNBF1jxNelpA8-NrRtoSBwG2Uhliw&s" alt="Shreeya in her bin habitat"></span>
+                        Historical Photo:<br>Shreeya refusing to leave her bin habitat.
+                    </div>
+                    
+                    <p>According to eyewitness accounts, she was discovered nesting in a pile of banana peels and old school wrappers, heavily defending her territory. To this day, her monkey instincts remain strong, often displaying behavior such as swinging from door frames and screeching when asked to do homework.</p>
+                </section>
+
+                <!-- Interactive Game -->
+                <section class="card">
+                    <h2>🎮 Mini-Game: Catch the Bin Monkey</h2>
+                    <p>Shreeya is trying to escape back to her trash sanctuary! Click her as many times as you can before the 15-second timer runs out.</p>
+                    
+                    <div class="score-board">
+                        <div>Score: <span id="score">0</span></div>
+                        <div>Time Left: <span id="timer">15</span>s</div>
+                    </div>
+                    
+                    <div id="game-area">
+                        <button class="btn" id="start-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">Start Game</button>
+                        <div id="target-monkey" style="display: none;">🐒</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar with Breaking News -->
+            <div>
+                <section class="card news-flash">
+                    <h2>🚨 BREAKING NEWS</h2>
+                    <p><strong>"Wants" Waste Management Corp</strong> issued a formal statement early this morning regarding an outstanding asset.</p>
+                    <hr style="border: 0; border-top: 1px solid #ffcdd2;">
+                    <p><em>"We are officially asking for our monkey back. Our records show a high-grade bin monkey escaped our facility and has been pretending to be a high school student. Please return her to the nearest green lid wheelie bin immediately."</em></p>
+                </section>
+
+                <section class="card">
+                    <h3>💡 Quick Stats</h3>
+                    <ul>
+                        <li><strong>Name:</strong> Shreeya</li>
+                        <li><strong>Habitat:</strong> The Bin</li>
+                        <li><strong>Diet:</strong> Banana peels</li>
+                        <li><strong>Status:</strong> Wanted by the Council</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameArea = document.getElementById('game-area');
+        const targetMonkey = document.getElementById('target-monkey');
+        const startBtn = document.getElementById('start-btn');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+
+        let score = 0;
+        let timeLeft = 15;
+        let gameInterval;
+        let isPlaying = false;
+
+        function moveMonkey() {
+            const maxX = gameArea.clientWidth - 50;
+            const maxY = gameArea.clientHeight - 50;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            targetMonkey.style.left = randomX + 'px';
+            targetMonkey.style.top = randomY + 'px';
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 15;
+            isPlaying = true;
+            scoreDisplay.textContent = score;
+            timerDisplay.textContent = timeLeft;
+            startBtn.style.display = 'none';
+            targetMonkey.style.display = 'flex';
+            
+            moveMonkey();
+
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(gameInterval);
+                    isPlaying = false;
+                    targetMonkey.style.display = 'none';
+                    startBtn.style.display = 'block';
+                    startBtn.textContent = 'Play Again';
+                    alert(`Game Over! You caught the bin monkey ${score} times!`);
+                }
+            }, 1000);
+        }
+
+        targetMonkey.addEventListener('click', () => {
+            if (isPlaying) {
+                score++;
+                scoreDisplay.textContent = score;
+                moveMonkey();
+            }
+        });
+
+        startBtn.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
